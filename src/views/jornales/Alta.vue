@@ -1,794 +1,250 @@
 <template>
-<CContainer class="d-flex align-items-center min-vh-100">
-  <div>
-    
-    <CRow>
-      <CCol md="6">
-        <CCard>
-          <CCardHeader>
-            <strong>Basic Form</strong> Elements
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput
-                description="Let us know your full name."
-                label="Enter your name"
-                horizontal
-                autocomplete="name"
-              />
-              <CInput
-                label="Static"
-                value="Username"
-                horizontal
-                plaintext
-              />
-              <CInput
-                label="Text input"
-                description="This is a help text"
-                placeholder="Text"
-                horizontal
-              />
-              <CInput
-                label="Date"
-                type="date"
-                horizontal
-              />
-              <CInput
-                label="Email input"
-                description="Please enter your email"
-                placeholder="Enter your email"
-                type="email"
-                horizontal
-                autocomplete="email"
-              />
-              <CInput
-                label="Password Input"
-                description="Please enter a complex password"
-                placeholder="Enter your password"
-                type="password"
-                horizontal
-                autocomplete="current-password"
-              />
-              <CInput
-                label="Disabled Input"
-                placeholder="Disabled"
-                horizontal
-                disabled
-              />
-              <CTextarea
-                label="Textarea"
-                placeholder="Content..."
-                horizontal
-                rows="9"
-              />
-              <CSelect
-                label="Select"
-                horizontal
-                :options="options"
-                placeholder="Please select"
-              />
-              <CSelect
-                label="Large select"
-                size="lg"
-                horizontal
-                :value.sync="selectedOption"
-                :options="selectOptions"
-                placeholder="Please select"
-              />
-              <CSelect
-                label="Small select"
-                size="sm"
-                horizontal
-                :options="options"
-                placeholder="Please select"
-              />
-              <CSelect
-                label="Select"
-                horizontal
-                :options="options"
-                placeholder="Please select"
-                disabled
-              />
-              <template v-for="(name, key) in checkboxNames">
-                <div class="form-group form-row" :key="name">
-                  <CCol tag="label" sm="3" class="col-form-label">
-                    {{name}}
-                  </CCol>
-                  <CCol sm="9" :class="key % 2 === 1 ? 'form-inline' : ''">
-                    <CInputCheckbox
-                      v-for="(option, optionIndex) in options"
-                      :key="key + option"
-                      :label="option"
-                      :value="option"
-                      :custom="key > 1"
-                      :name="`Option 1${key}`"
-                      :checked="optionIndex === key"
-                      :inline="key % 2 === 1"
-                    />
-                  </CCol>
-                </div>
-              </template>
-              <template v-for="(name, key) in radioNames">
-                <div class="form-row form-group" :key="name">
-                  <CCol sm="3">
-                    {{name}}
-                  </CCol>
-                  <CCol sm="9" :class="key % 2 === 1 ? 'form-inline' : ''">
-                    <CInputRadio
-                      v-for="(option, optionIndex) in options"
-                      :key="key + option"
-                      :label="option"
-                      type="radio"
-                      :value="option"
-                      :custom="key > 1"
-                      :name="`Option 1${key}`"
-                      :checked="optionIndex === key"
-                      :inline="key % 2 === 1"
-                    />
-                  </CCol>
-                </div>
-              </template>
-              <CInputFile
-                label="File input"
-                horizontal
-              />
-              <CInputFile
-                label="Multiple file input"
-                horizontal
-                multiple
-              />
-              <CInputFile
-                label="File custom input"
-                horizontal
-                custom
-              />
-              <CInputFile
-                label="Multiple file custom input"
-                horizontal
-                multiple
-                custom
-              />
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-        <CCard>
-          <CCardHeader>
-            <strong>Inline</strong> Form
-          </CCardHeader>
+  <div class="animated fadeIn">
+    <b-row>
+    <b-col md="6">
+        <b-card>
+          <div slot="header">
+            <strong>Turnos del dia</strong>
+          </div>
 
-          <CCardBody>
-            <!-- Bootstrap Vue has some problems with Inline forms that's why we use some standard bootstrap classes -->
-            <CForm inline>
-              <CInput
-                class="mr-2"
-                placeholder="Jane Doe"
-              >
-                <template #label>
-                  <small>Name:&nbsp;</small>
-                </template>
-              </CInput>
-              <CInput
-                placeholder="jane.doe@example.com"
-                autocomplete="email"
-              >
-                <template #label>
-                  <small>Email:&nbsp;</small>
-                </template>
-              </CInput>
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol md="6">
-        <CCard>
-          <CCardHeader>
+          <b-table small  :items="turnos" :fields="fields" :current-page="currentPage" :per-page="perPage">
+            <template slot="status" slot-scope="turnos">
+            <b-button type="button" size="sm" variant="primary" @click="activModal(turnos.item.status)">
+              <i :class="getBadge(turnos.item.status)" ></i>
+            </b-button>
+          </template>
+          </b-table>
+          <nav>
+           <b-pagination :total-rows="getRowCount(turnos)" :per-page="perPage" v-model="currentPage" prev-text="Prev" next-text="Next" hide-goto-end-buttons/>
+          </nav>
+          <div slot="footer">
+            <b-button type="submit" size="sm" variant="primary"><i class="fa fa-dot-circle-o"></i> Submit</b-button>
+            <b-button type="reset" size="sm" variant="danger"><i class="fa fa-ban"></i> Reset</b-button>
+          </div>
+        </b-card>
+    </b-col>
+    <b-col md="6">
+        <b-card>
+          <div slot="header">
             <strong>Horizontal</strong> Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput
-                type="email"
-                description="Please enter your email."
-                autocomplete="email"
-                label="Email"
-                horizontal
-                placeholder="Enter Email..."
-              />
-              <CInput
-                type="password"
-                description="Please enter your password."
-                autocomplete="current-password"
-                label="Password"
-                horizontal
-                placeholder="Enter Password..."
-              />
-            </CForm>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-        <CCard>
-          <CCardHeader>
-            <strong>Normal</strong> Form
-          </CCardHeader>
-          <CForm novalidate>
-            <CCardBody>
-              <CInput
-                type="email"
-                description="Please enter your email."
-                autocomplete="email"
-                label="Email"
-                placeholder="Enter Email..."
-                required
-                was-validated
-              />
-              <CInput
-                type="password"
-                description="Please enter your password."
-                autocomplete="current-password"
-                label="Password"
-                placeholder="Enter Password..."
-                required
-                was-validated
-              />
-            </CCardBody>
-            <CCardFooter>
-              <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-              <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-            </CCardFooter>
-          </CForm>
-        </CCard>
-        <CCard>
-          <CCardHeader>
-            Input <strong>Grid</strong>
-          </CCardHeader>
-          <CCardBody>
-            <CRow class="form-group">
-              <CCol sm="3">
-                <CInput class="mb-0" placeholder=".col-sm-3"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="4">
-                <CInput class="mb-0" placeholder=".col-sm-4"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="5">
-                <CInput class="mb-0" placeholder=".col-sm-5"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="6">
-                <CInput class="mb-0" placeholder=".col-sm-6"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="7">
-                <CInput class="mb-0" placeholder=".col-sm-7"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="8">
-                <CInput class="mb-0" placeholder=".col-sm-8"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="9">
-                <CInput class="mb-0" placeholder=".col-sm-9"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="10">
-                <CInput class="mb-0" placeholder=".col-sm-10"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="11">
-                <CInput class="mb-0" placeholder=".col-sm-11"/>
-              </CCol>
-            </CRow>
-            <CRow class="form-group">
-              <CCol sm="12">
-                <CInput class="mb-0" placeholder=".col-sm-12"/>
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-user"/> Login</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-        <CCard>
-          <CCardHeader>
-            Input <strong>Sizes</strong>
-          </CCardHeader>
-          <CCardBody>
-            <CInput
-              label="Small input"
-              size="sm"
-              horizontal
-              placeholder="size='sm'"
-            />
-            <CInput
-              label="Default input"
-              horizontal
-              placeholder="normal"
-            />
-            <CInput
-              label="Large input"
-              size="lg"
-              horizontal
-              placeholder="size='lg'"
-            />
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="primary"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-
-      <CCol sm="12" md="6">
-        <CCard>
-          <CCardHeader>
-            <strong>Basic Validation</strong> Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm validated novalidate>
-              <CInput
-                label="Input is valid"
-                valid-feedback="Input is not required."
-              />
-              <CInput
-                label="Input is invalid"
-                required
-                valid-feedback="Thank you :)"
-                invalid-feedback="Please provide a required input."
-              />
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol sm="12" md="6">
-        <CCard>
-          <CCardHeader>
-            <strong>Custom Validation</strong> Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput
-                label="Input is valid"
-                valid-feedback="Input is valid."
-                invalid-feedback="Please provide at least 4 characters."
-                value="Valid value"
-                :is-valid="validator"
-              />
-              <CInput
-                label="Input is invalid"
-                valid-feedback="Thank you :)"
-                invalid-feedback="Please provide at least 4 characters."
-                :is-valid="validator"
-              />
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            <strong>Icon/Text</strong> Groups
-          </CCardHeader>
-          <CCardBody>
-            <CInput placeholder="Username">
-              <template #prepend-content><CIcon name="cil-user"/></template>
-            </CInput>
-            <CInput
-              type="email"
-              placeholder="Email"
-              autocomplete="email"
-            >
-              <template #append-content><CIcon name="cil-envelope-open"/></template>
-            </CInput>
-            <CInput
-              placeholder="ex. $1.000.000"
-              append=".00"
-            >
-              <template #prepend-content><CIcon name="cil-euro"/></template>
-            </CInput>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="success"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            <strong>Buttons</strong> Groups
-          </CCardHeader>
-          <CCardBody>
-            <CInput placeholder="Username">
-              <template #prepend>
-                <CButton color="primary">
-                  <CIcon name="cil-magnifying-glass"/> Search
-                </CButton>
-              </template>
-            </CInput>
-            <CInput
-              type="email"
-              placeholder="Email"
-              autocomplete="email"
-            >
-              <template #append>
-                <CButton type="submit" color="primary">Submit</CButton>
-              </template>
-            </CInput>
-            <CInput
-              type="email"
-              placeholder="Email"
-              autocomplete="email"
-            >
-              <template #prepend>
-                <CButton color="primary"><CIcon name="cib-facebook" height="14"/></CButton>
-              </template>
-              <template #append>
-                <CButton color="primary"><CIcon name="cib-twitter" height="14"/></CButton>
-              </template>
-            </CInput>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="success"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            <strong>Dropdowns</strong> Groups
-          </CCardHeader>
-          <CCardBody>
-            <CInput placeholder="Username">
-              <template #prepend>
-                <CDropdown
-                  togglerText="Action"
-                  color="primary"
-                >
-                  <CDropdownItem>Action</CDropdownItem>
-                  <CDropdownItem>Another action</CDropdownItem>
-                  <CDropdownItem>Something else here...</CDropdownItem>
-                  <CDropdownItem disabled>Disabled action</CDropdownItem>
-                </CDropdown>
-              </template>
-            </CInput>
-            <CInput
-              type="email"
-              placeholder="Email"
-              autocomplete="email"
-            >
-              <template #append>
-                <CDropdown
-                  togglerText="Action"
-                  color="primary"
-                  right
-                >
-                  <CDropdownItem>Action</CDropdownItem>
-                  <CDropdownItem>Another action</CDropdownItem>
-                  <CDropdownItem>Something else here...</CDropdownItem>
-                  <CDropdownItem disabled>Disabled action</CDropdownItem>
-                </CDropdown>
-              </template>
-            </CInput>
-            <CInput placeholder="...">
-
-              <template #prepend>
-                <CDropdown
-                  togglerText="Split"
-                  color="primary"
-                  split
-                >
-                  <CDropdownItem href="#">Action</CDropdownItem>
-                  <CDropdownItem href="#">Another action</CDropdownItem>
-                  <CDropdownItem href="#">Something else here...</CDropdownItem>
-                  <CDropdownItem disabled>Disabled action</CDropdownItem>
-                </CDropdown>
-              </template>
-
-              <template #append>
-                <CDropdown
-                  togglerText="Action"
-                  color="primary"
-                  right
-                >
-                  <CDropdownItem>Action</CDropdownItem>
-                  <CDropdownItem>Another action</CDropdownItem>
-                  <CDropdownItem>Something else here...</CDropdownItem>
-                  <CDropdownItem disabled>Disabled action</CDropdownItem>
-                </CDropdown>
-              </template>
-
-            </CInput>
-          </CCardBody>
-          <CCardFooter>
-            <CButton type="submit" size="sm" color="success"><CIcon name="cil-check-circle"/> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><CIcon name="cil-ban"/> Reset</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol md="6">
-        <CCard>
-          <CCardHeader>
-            Use the grid for big devices! <small><code>.col-lg-*</code> <code>.col-md-*</code> <code>.col-sm-*</code></small>
-          </CCardHeader>
-          <CCardBody>
-            <CRow
-              class="form-group"
-              v-for="(number, key) in [4,5,6,7,8]"
-              :key="key"
-            >
-              <CCol :col="12 - number">
-                <CInput class="mb-0" :placeholder="`.col-md-${12 - number}`"/>
-              </CCol>
-              <CCol :col="number">
-                <CInput class="mb-0" :placeholder="`.col-md-${number}`"/>
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton size="sm" color="primary">Action</CButton>
-            <CButton size="sm" color="danger">Action</CButton>
-            <CButton size="sm" color="warning">Action</CButton>
-            <CButton size="sm" color="info">Action</CButton>
-            <CButton size="sm" color="success">Action</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-      <CCol md="6">
-        <CCard>
-          <CCardHeader>
-            Input Grid for small devices! <small> <code>.col-*</code></small>
-          </CCardHeader>
-          <CCardBody>
-            <CRow
-              class="form-group"
-              v-for="(number, key) in [4,5,6,7,8]"
-              :key="key"
-            >
-              <CCol :col="number">
-                <CInput class="mb-0" :placeholder="`.col-${number}`"/>
-              </CCol>
-              <CCol :col="12 - number">
-                <CInput class="mb-0" :placeholder="`.col-${12 - number}`"/>
-              </CCol>
-            </CRow>
-          </CCardBody>
-          <CCardFooter>
-            <CButton size="sm" color="primary">Action</CButton>
-            <CButton size="sm" color="danger">Action</CButton>
-            <CButton size="sm" color="warning">Action</CButton>
-            <CButton size="sm" color="info">Action</CButton>
-            <CButton size="sm" color="success">Action</CButton>
-          </CCardFooter>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            Example Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput prepend="Username">
-                <template #append-content><CIcon name="cil-user"/></template>
-              </CInput>
-              <CInput
-                type="email"
-                autocomplete="email"
-                prepend="Email"
-              >
-                <template #append-content><CIcon name="cil-envelope-closed"/></template>
-              </CInput>
-              <CInput
-                type="password"
-                autocomplete="current-password"
-                prepend="Password"
-              >
-                <template #append-content><CIcon name="cil-shield-alt"/></template>
-              </CInput>
-              <div class="form-group form-actions">
-                <CButton type="submit" size="sm" color="primary">
-                  Submit
-                </CButton>
-              </div>
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            Example Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput placeholder="Username">
-                <template #append-content><CIcon name="cil-user"/></template>
-              </CInput>
-              <CInput
-                placeholder="Email"
-                type="email"
-                autocomplete="email"
-              >
-                <template #append-content><CIcon name="cil-envelope-closed"/></template>
-              </CInput>
-              <CInput
-                placeholder="Password"
-                type="password"
-                autocomplete="current-password"
-              >
-                <template #append-content><CIcon name="cil-shield-alt"/></template>
-              </CInput>
-              <div class="form-group form-actions">
-                <CButton type="submit" class="btn btn-sm btn-secondary">
-                  Submit
-                </CButton>
-              </div>
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CCol>
-      <CCol sm="4">
-        <CCard>
-          <CCardHeader>
-            Example Form
-          </CCardHeader>
-          <CCardBody>
-            <CForm>
-              <CInput placeholder="Username">
-                <template #prepend-content><CIcon name="cil-user"/></template>
-              </CInput>
-              <CInput
-                placeholder="Email"
-                type="email"
-                autocomplete="email"
-              >
-                <template #prepend-content><CIcon name="cil-envelope-closed"/></template>
-              </CInput>
-              <CInput
-                placeholder="Password"
-                type="password"
-                autocomplete="current-password"
-              >
-                <template #prepend-content><CIcon name="cil-shield-alt"/></template>
-              </CInput>
-              <div class="form-group form-actions">
-                <CButton type="submit" size="sm" color="success">
-                  Submit
-                </CButton>
-              </div>
-            </CForm>
-          </CCardBody>
-        </CCard>
-      </CCol>
-    </CRow>
-    <CRow>
-      <CCol lg="12">
-        <transition name="fade">
-          <CCard v-if="show">
-            <CCardHeader>
-              <CIcon name="cil-pencil"/> Form Elements
-              <div class="card-header-actions">
-                <CLink href="#" class="card-header-action btn-setting">
-                  <CIcon name="cil-settings"/>
-                </CLink>
-                <CLink
-                  class="card-header-action btn-minimize"
-                  @click="formCollapsed=!formCollapsed"
-                >
-                  <CIcon :name="`cil-chevron-${formCollapsed ? 'bottom' : 'top'}`"/>
-                </CLink>
-                <CLink href="#" class="card-header-action btn-close" v-on:click="show = !show">
-                  <CIcon name="cil-x-circle"/>
-                </CLink>
-              </div>
-            </CCardHeader>
-            <CCollapse :show="formCollapsed">
-              <CCardBody>
-                <CInput
-                  label="Prepended text"
-                  description="Here's some help text"
-                  type="email"
-                  autocomplete="email"
-                  prepend="@"
-                />
-                <CInput
-                  label="Appended text"
-                  append=".00"
-                  description="Here's some help text"
-                />
-                <CInput
-                  label="Appended and prepended text"
-                  append=".00"
-                  description="Here's some help text"
-                  prepend="$"
-                />
-                <CInput
-                  label="Append with button"
-                  description="Here's some help text"
-                >
-                  <template #append>
-                    <CButton color="primary">Go!</CButton>
-                  </template>
-                </CInput>
-                <CInput label="Two-buttons append">
-                  <template #append>
-                    <CButton color="primary">Search</CButton>
-                    <CButton color="danger">Options</CButton>
-                  </template>
-                </CInput>
-                <div class="form-actions">
-                  <CButton type="submit" color="primary">Save changes</CButton>
-                  <CButton color="secondary">Cancel</CButton>
-                </div>
-              </CCardBody>
-            </CCollapse>
-          </CCard>
-        </transition>
-      </CCol>
-    </CRow>
+          </div>
+          <b-form-group label="Fecha" label-for="fecha" :label-cols="3" :horizontal="true">
+            <b-input-group>
+                <b-form-input type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></b-form-input>
+                <!-- Attach Right button
+                <b-input-group-append> <b-button variant="primary" @click="fetchProfesionales">Buscar</b-button> </b-input-group-append> -->
+            </b-input-group>
+          </b-form-group>
+          <b-form-group label="Profesional" label-for="basicMultiSelect" :label-cols="3" :horizontal="true">
+            <b-form-select id="basicMultiSelect" :plain="true" :multiple="false" :options="profesionales" :value="profesional"
+            v-on:change="cambiando">
+            </b-form-select>
+          </b-form-group>
+            <div slot="footer">
+              <b-button type="submit" size="sm" variant="primary"><i class="fa fa-dot-circle-o"></i> Submit</b-button>
+              <b-button type="reset" size="sm" variant="danger"><i class="fa fa-ban"></i> Reset</b-button>
+            </div>
+          </b-form>
+        </b-card>
+       </b-col>
+       </b-row>
+      <b-row>
+        <b-col md="6">
+        <b-modal title="Agendar Turno" class="modal-primary" v-model="primaryModal" @ok="primaryModal = false">
+          <b-form>
+            <b-form-group description="buscar por nombre y apellido" label="Seleccione el Paciente"
+             label-for="basicName" :label-cols="3" :horizontal="true">
+             <vue-single-select v-model="paciente" :options="pacientes" :required="true" option-label="a_title"
+              :getOptionDescription="getCustomDescription" option-key="id" @input="buscatePaciente">
+              </vue-single-select>
+            </b-form-group>
+          </b-form>
+        </b-modal>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col md="6">
+          <b-modal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-variant="danger">
+          Está Ud. seguro de eliminar el turno?
+        </b-modal>
+        </b-col>
+      </b-row>
   </div>
-</CContainer>
+
 </template>
 
 <script>
+import Vue from 'vue';
+import VueSingleSelect from "vue-single-select";
+import DataService from '../../services/DataService';
+const dataservice = new DataService();
+var turnos = [];
+
 export default {
+  components: {
+     VueSingleSelect
+    },
+    //...
+  
   name: 'Alta',
   data () {
     return {
+      turnos: [],
+      fields: [
+        {key: 'hora'},
+        {key: 'paciente'},
+        {key: 'status'}
+      ],
+      currentPage: 1,
+      perPage: 5,
+      totalRows: 0,
       selected: [], // Must be an array reference!
       show: true,
-      horizontal: { label:'col-3', input:'col-9' },
-      options: ['Option 1', 'Option 2', 'Option 3'],
-      selectOptions: [
-        'Option 1', 'Option 2', 'Option 3',
-        { 
-          value: ['some value', 'another value'], 
-          label: 'Selected option'
-        }
-      ],
-      selectedOption: ['some value', 'another value'],
-
-      formCollapsed: true,
-      checkboxNames: ['Checkboxes', 'Inline Checkboxes',
-                      'Checkboxes - custom', 'Inline Checkboxes - custom'],
-      radioNames: ['Radios', 'Inline Radios',
-                    'Radios - custom', 'Inline Radios - custom']
+      startDate: '',
+      primaryModal: false,
+      dangerModal: false,
+      fruit:[],
+      profesionales:[],
+      profesional:'',
+      fecha:'',
+      pacientes:[],
+      paciente:''
     }
   },
+  created () {
+  },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'fetchData'
+   //this.search(equipo_id);
+  },
+  /*mounted() {
+      $("#fecha").datepicker().on(
+        "changeDate", () => {this.startDate = $('#fecha').val()}
+      );
+    },*/
   methods: {
-    validator (val) {
-      return val ? val.length >= 4 : false
-    }
+    fetchProfesionales (fechita) {
+      this.show = true;
+      this.fecha=fechita;
+      dataservice.getProfesionales().then( result => {
+        if(result.status==200){
+          this.profesionales = result.data.results.map(function(obj){
+            var obj_select = {};
+            obj_select.value = obj.id;
+            obj_select.text = obj.apellido+","+obj.nombre;
+            return(obj_select)
+          })
+          this.profesional=this.profesionales[0].value;
+        }
+      },
+      (error) => {
+        //this.showAlert();
+        //this.disabled=1;
+      })
+      
+    },
+    
+    getBadge (status) {
+      return status === 'Active' ? 'fa fa-calendar-minus-o'
+        : status === 'Inactive' ? 'fa fa-calendar-plus-o'
+        : status === 'Pending' ? 'fa fa-pencil': 'fa fa-calendar-minus-o'
+         
+    },
+    getRowCount (items) {
+      return items.length
+    },
+    cambiando(prof){
+      this.profesional=prof;
+      
+      dataservice.getTurnosDiaProfesional(this.fecha,prof).then( result => {
+        if(result.status==200){
+          console.log(result.data);
+        }
+      },
+      (error) => {
+        //this.showAlert();
+        //this.disabled=1;
+      })
+
+
+
+           this.turnos  =[
+            {hora: '08:00', paciente:'Sandro de America', status:'Active'},
+            {hora: '08:15', paciente:'Sandro de America', status:'Pending'},
+            {hora: '08:30', paciente:'Sandro de America', status:'Active'},
+            {hora: '08:45', paciente:'', status:'Inactive'},
+            {hora: '09:00', paciente:'Sandro de America', status:'Active'},
+            {hora: '09:15', paciente:'Sandro de America', status:'Active'},
+            {hora: '09:30', paciente:'Sandro de America', status:'Pending'},
+            {hora: '09:45', paciente:'', status:'Inactive'},
+            {hora: '10:00', paciente:'Sandro de America', status:'Pending'},
+            {hora: '10:15', paciente:'Sandro de America', status:'Active'},
+            {hora: '10:30', paciente:'Sandro de America', status:'Active'},
+            {hora: '10:45', paciente:'', status:'Inactive'},
+            {hora: '11:00', paciente:'Sandro de America', status:'Inactive'},
+            {hora: '11:15', paciente:'', status:'Inactive'},
+            {hora: '11:30', paciente:'Sandro de America', status:'Active'},
+            {hora: '11:45', paciente:'Sandro de America', status:'Active'},
+            {hora: '12:00', paciente:'Sandro de America', status:'Active'},
+            {hora: '12:15', paciente:'Sandro de America', status:'Active'},
+            {hora: '12:30', paciente:'Sandro de America', status:'Pending'},
+            {hora: '12:45', paciente:'Sandro de America', status:'Active'},
+            {hora: '13:00', paciente:'', status:'Inactive'},
+            {hora: '13:15', paciente:'', status:'Inactive'},
+            {hora: '13:30', paciente:'Sandro de America', status:'Active'},
+            {hora: '13:45', paciente:'Sandro de America', status:'Active'}
+        
+        ];
+      },
+      activModal(status){
+        //obtener profesional y fecha de los otros input
+        switch (status) {
+          case "Active":
+            //pregunto si quiere eliminar el turno
+            console.log('idProfesional:'+this.profesional+ 'fecha:'+this.startDate);
+        
+            this.dangerModal=true;
+            break;
+          case "Inactive":
+          //traigo pacientes y para asignar a ese turno
+            this.pacientes= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
+                 { id: 3, a_title: "Eos rerum veniam quia mollitia"},{ id: 4, a_title: "Robs Thread" }];
+            this.primaryModal=true;
+            break;
+          case "Pending":
+            //traigo pacientes y permito editar el turno
+            this.pacientes= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
+                 { id: 3, a_title: "Eos rerum veniam quia mollitia"},{ id: 4, a_title: "Robs Thread" }];
+            this.primaryModal=true;
+        }
+        
+        
+      },
+      buscatePaciente(opt){
+        if(opt){
+          console.log("paciente:"+opt.a_title+" ID:"+opt.id);
+        }        
+        //alert(this.value);
+
+      },
+      getCustomDescription(opt) {
+        return opt.a_title
+      },
+      eliminaTurno(){
+        console.log("eliminando");
+      }
   }
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
