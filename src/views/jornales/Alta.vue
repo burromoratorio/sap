@@ -1,74 +1,78 @@
 <template>
   <div class="animated fadeIn">
-    <b-row>
-    <b-col md="6">
-        <b-card>
+    <CRow>
+    <CCol md="6">
+        <CCard>
           <div slot="header">
             <strong>Turnos del dia</strong>
           </div>
 
-          <b-table small  :items="turnos" :fields="fields" :current-page="currentPage" :per-page="perPage">
+          <CDataTable small  :items="turnos" :fields="fields" :items-per-page="perPage" pagination>
+            <!--<template #status="{item}">
+              <td>
+                <CBadge :color="getBadge(item.status)">{{item.status}}</CBadge>
+              </td>
+            </template>-->
+
             <template slot="status" slot-scope="turnos">
-            <b-button type="button" size="sm" variant="primary" @click="activModal(turnos.item.status)">
+            <CButton type="button" size="sm" color="primary" @click="activModal(turnos.item.status)">
               <i :class="getBadge(turnos.item.status)" ></i>
-            </b-button>
+            </CButton>
           </template>
-          </b-table>
-          <nav>
+          </CDataTable>
+          <!--<nav>
            <b-pagination :total-rows="getRowCount(turnos)" :per-page="perPage" v-model="currentPage" prev-text="Prev" next-text="Next" hide-goto-end-buttons/>
-          </nav>
+          </nav>-->
           <div slot="footer">
-            <b-button type="submit" size="sm" variant="primary"><i class="fa fa-dot-circle-o"></i> Submit</b-button>
-            <b-button type="reset" size="sm" variant="danger"><i class="fa fa-ban"></i> Reset</b-button>
+            <CButton type="submit" size="sm" color="primary"><i class="fa fa-dot-circle-o"></i> Submit</CButton>
+            <CButton type="reset" size="sm" color="danger"><i class="fa fa-ban"></i> Reset</CButton>
           </div>
-        </b-card>
-    </b-col>
-    <b-col md="6">
-        <b-card>
+        </CCard>
+    </CCol>
+    <CCol md="6">
+        <CCard>
           <div slot="header">
             <strong>Horizontal</strong> Form
           </div>
-          <b-form-group label="Fecha" label-for="fecha" :label-cols="3" :horizontal="true">
-            <b-input-group>
-                <b-form-input type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></b-form-input>
+          <CForm label="Fecha" label-for="fecha" :label-cols="3" :horizontal="true">
+                <CInput type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></CInput>
                 <!-- Attach Right button
-                <b-input-group-append> <b-button variant="primary" @click="fetchProfesionales">Buscar</b-button> </b-input-group-append> -->
-            </b-input-group>
-          </b-form-group>
-          <b-form-group label="Profesional" label-for="basicMultiSelect" :label-cols="3" :horizontal="true">
-            <b-form-select id="basicMultiSelect" :plain="true" :multiple="false" :options="profesionales" :value="profesional"
-            v-on:change="cambiando">
-            </b-form-select>
-          </b-form-group>
+                <b-input-group-append> <CButton color="primary" @click="fetchProfesionales">Buscar</CButton> </b-input-group-append> -->
+          </CForm>
+          <CForm label="Profesional" label-for="basicMultiSelect" :label-cols="3" :horizontal="true">
+            <CSelect id="basicMultiSelect" :options="profesionales" :value.sync="profesional"
+            v-on:change="cambiando"/>
+            
+          </CForm>
             <div slot="footer">
-              <b-button type="submit" size="sm" variant="primary"><i class="fa fa-dot-circle-o"></i> Submit</b-button>
-              <b-button type="reset" size="sm" variant="danger"><i class="fa fa-ban"></i> Reset</b-button>
+              <CButton type="submit" size="sm" color="primary"><i class="fa fa-dot-circle-o"></i> Submit</CButton>
+              <CButton type="reset" size="sm" color="danger"><i class="fa fa-ban"></i> Reset</CButton>
             </div>
           </b-form>
-        </b-card>
-       </b-col>
-       </b-row>
-      <b-row>
-        <b-col md="6">
+        </CCard>
+       </CCol>
+       </CRow>
+      <CRow>
+        <CCol md="6">
         <b-modal title="Agendar Turno" class="modal-primary" v-model="primaryModal" @ok="primaryModal = false">
           <b-form>
-            <b-form-group description="buscar por nombre y apellido" label="Seleccione el Paciente"
+            <CForm description="buscar por nombre y apellido" label="Seleccione el Paciente"
              label-for="basicName" :label-cols="3" :horizontal="true">
              <vue-single-select v-model="paciente" :options="pacientes" :required="true" option-label="a_title"
               :getOptionDescription="getCustomDescription" option-key="id" @input="buscatePaciente">
               </vue-single-select>
-            </b-form-group>
+            </CForm>
           </b-form>
         </b-modal>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="6">
-          <b-modal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-variant="danger">
+        </CCol>
+      </CRow>
+      <CRow>
+        <CCol md="6">
+          <b-modal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-color="danger">
           Está Ud. seguro de eliminar el turno?
         </b-modal>
-        </b-col>
-      </b-row>
+        </CCol>
+      </CRow>
   </div>
 
 </template>
@@ -76,6 +80,7 @@
 <script>
 import Vue from 'vue';
 import VueSingleSelect from "vue-single-select";
+import CTableWrapper from '../base/Table.vue'
 import DataService from '../../services/DataService';
 const dataservice = new DataService();
 var turnos = [];
