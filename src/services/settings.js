@@ -1,3 +1,3 @@
 export class AppSettings {
-//static API_ENDPOINT="http://health-management.com/";
+ static API_ENDPOINT="http://health-management.com/";
 }

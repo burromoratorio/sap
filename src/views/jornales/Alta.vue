@@ -35,9 +35,11 @@
             <strong>Horizontal</strong> Form
           </div>
           <CForm label="Fecha" label-for="fecha" :label-cols="3" :horizontal="true">
-                <CInput type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></CInput>
-                <!-- Attach Right button
-                <b-input-group-append> <CButton color="primary" @click="fetchProfesionales">Buscar</CButton> </b-input-group-append> -->
+             <CInput label="Fecha" id="fecha" type="date" horizontal v-model="startDate" v-on:change="fetchProfesionales" />
+             <CButton color="primary" @click="fetchProfesionales">Buscar</CButton>
+                <!-- <CInput type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></CInput>
+                Attach Right button
+                <b-input-group-append>  </b-input-group-append> -->
           </CForm>
           <CForm label="Profesional" label-for="basicMultiSelect" :label-cols="3" :horizontal="true">
             <CSelect id="basicMultiSelect" :options="profesionales" :value.sync="profesional"
@@ -48,29 +50,27 @@
               <CButton type="submit" size="sm" color="primary"><i class="fa fa-dot-circle-o"></i> Submit</CButton>
               <CButton type="reset" size="sm" color="danger"><i class="fa fa-ban"></i> Reset</CButton>
             </div>
-          </b-form>
+          </CForm>
         </CCard>
        </CCol>
        </CRow>
       <CRow>
         <CCol md="6">
-        <b-modal title="Agendar Turno" class="modal-primary" v-model="primaryModal" @ok="primaryModal = false">
-          <b-form>
+        <CModal title="Agendar Turno" class="modal-primary" v-model="primaryModal" @ok="primaryModal = false">
             <CForm description="buscar por nombre y apellido" label="Seleccione el Paciente"
              label-for="basicName" :label-cols="3" :horizontal="true">
              <vue-single-select v-model="paciente" :options="pacientes" :required="true" option-label="a_title"
               :getOptionDescription="getCustomDescription" option-key="id" @input="buscatePaciente">
               </vue-single-select>
             </CForm>
-          </b-form>
-        </b-modal>
+        </CModal>
         </CCol>
       </CRow>
       <CRow>
         <CCol md="6">
-          <b-modal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-color="danger">
+          <CModal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-color="danger">
           Está Ud. seguro de eliminar el turno?
-        </b-modal>
+        </CModal>
         </CCol>
       </CRow>
   </div>
@@ -132,7 +132,15 @@ export default {
     fetchProfesionales (fechita) {
       this.show = true;
       this.fecha=fechita;
-      dataservice.getProfesionales().then( result => {
+      this.profesionales  =[
+            {value: 1, text:'Sandro de America'},
+            {value: 2, text:'Ezequiel pindonga'},
+            {value: 3, text:'Pija Dura'},
+            {value: 4, text:'Caca de Perro'},
+            {value: 5, text:'Gordo Porcel'}
+        ];
+        this.profesional=this.profesionales[0].value;
+      /*dataservice.getProfesionales().then( result => {
         if(result.status==200){
           this.profesionales = result.data.results.map(function(obj){
             var obj_select = {};
@@ -144,9 +152,8 @@ export default {
         }
       },
       (error) => {
-        //this.showAlert();
-        //this.disabled=1;
-      })
+        
+      })*/
       
     },
     
