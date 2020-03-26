@@ -1,85 +1,81 @@
 <template>
   <div class="animated fadeIn">
     <CRow>
-    <CCol md="6">
+    <CCol sm="6" md="6">
         <CCard>
-          <div slot="header">
-            <strong>Turnos del dia</strong>
-          </div>
-
-          <CDataTable small  :items="turnos" :fields="fields" :items-per-page="perPage" pagination>
-            <!--<template #status="{item}">
-              <td>
-                <CBadge :color="getBadge(item.status)">{{item.status}}</CBadge>
-              </td>
-            </template>-->
-
-            <template slot="status" slot-scope="turnos">
-            <CButton type="button" size="sm" color="primary" @click="activModal(turnos.item.status)">
-              <i :class="getBadge(turnos.item.status)" ></i>
-            </CButton>
-          </template>
-          </CDataTable>
-          <!--<nav>
-           <b-pagination :total-rows="getRowCount(turnos)" :per-page="perPage" v-model="currentPage" prev-text="Prev" next-text="Next" hide-goto-end-buttons/>
-          </nav>-->
-          <div slot="footer">
-            <CButton type="submit" size="sm" color="primary"><i class="fa fa-dot-circle-o"></i> Submit</CButton>
-            <CButton type="reset" size="sm" color="danger"><i class="fa fa-ban"></i> Reset</CButton>
-          </div>
+          <CCardHeader>Formulario calculo de Horas</CCardHeader>
+          <CCardBody>
+            <CRow>
+              <CCol sm="6"><CInput label="Buque" placeholder="Buque:" /></CCol>
+              <CCol sm="6"><CInput label="Lugar" placeholder="Lugar:" /></CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="6">
+                <date-picker placeholder="Fecha Inicio:" format="DD-MM-YYYY HH:mm" v-model="inicio" type="datetime" ></date-picker>
+              </CCol>
+              <CCol sm="6">
+                <date-picker placeholder="Fecha Fin:" format="DD-MM-YYYY HH:mm" v-model="fin" type="datetime"></date-picker>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CCol sm="4"><CInput label="Horas al 50" placeholder="Al 50" /></CCol>
+              <CCol sm="4"><CInput label="Horas al 100" placeholder="Al 100" /></CCol>
+              <CCol sm="4"><CInput label="Horas al 125" placeholder="Al 125" /></CCol>
+            </CRow>
+          </CForm>
+          </CCardBody>
+        </CCard>
+        <CCard><CCardHeader>Totales</CCardHeader>
+            <CCardBody>
+              <CRow>
+                  <CCol sm="4">
+                    <CInput label="Dias" placeholder="Dias" />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput label="Horas Trabajdas" placeholder="Horas" />
+                  </CCol>
+                  <CCol sm="4">
+                    <CInput label="Jornales Trabajados" placeholder="Jornales" />
+                  </CCol>
+              </CRow>
+              <CRow class="align-items-center">
+                <CCol  sm="6" xl class="mb-3 mb-xl-0">
+                  <CButton color="success" shape="pill" size="lg" @click="calculaJornales">Calcular</CButton></CCol>
+                <CCol  sm="6" xl class="mb-3 mb-xl-0">
+                  <CButton color="primary" shape="pill" size="lg" @click="saveJornales">Guardar</CButton></CCol>
+              </CRow>
+            </CCardBody>
         </CCard>
     </CCol>
-    <CCol md="6">
+    <CCol sm="6" md="6">
         <CCard>
-          <div slot="header">
-            <strong>Horizontal</strong> Form
-          </div>
-          <CForm label="Fecha" label-for="fecha" :label-cols="3" :horizontal="true">
-             <CInput label="Fecha" id="fecha" type="date" horizontal v-model="startDate" v-on:change="fetchProfesionales" />
-             <CButton color="primary" @click="fetchProfesionales">Buscar</CButton>
-                <!-- <CInput type="date" id="fecha" v-model="startDate" v-on:change="fetchProfesionales"></CInput>
-                Attach Right button
-                <b-input-group-append>  </b-input-group-append> -->
+          <CCardHeader>Formulario Seleccion de Personal</CCardHeader>
+          <CCardBody>
+          <CForm description="buscar por nombre y apellido" label="Seleccione el Empleado"
+             label-for="basicName" :label-cols="3" :horizontal="true">
+             <vue-single-select v-model="empleado" :options="empleados" :required="true" option-label="a_title"
+              :getOptionDescription="getCustomDescription" option-key="id" @input="buscateEmpleado">
+              </vue-single-select>
+              <CInput id="tipo" label="Tipo de Empleado" v-model="tipo" horizontal plaintext/>
+
           </CForm>
-          <CForm label="Profesional" label-for="basicMultiSelect" :label-cols="3" :horizontal="true">
-            <CSelect id="basicMultiSelect" :options="profesionales" :value.sync="profesional"
-            v-on:change="cambiando"/>
-            
-          </CForm>
-            <div slot="footer">
+          <div slot="footer">
               <CButton type="submit" size="sm" color="primary"><i class="fa fa-dot-circle-o"></i> Submit</CButton>
               <CButton type="reset" size="sm" color="danger"><i class="fa fa-ban"></i> Reset</CButton>
-            </div>
-          </CForm>
+          </div>
+          </CCardBody>
         </CCard>
-       </CCol>
-       </CRow>
-      <CRow>
-        <CCol md="6">
-        <CModal title="Agendar Turno" class="modal-primary" v-model="primaryModal" @ok="primaryModal = false">
-            <CForm description="buscar por nombre y apellido" label="Seleccione el Paciente"
-             label-for="basicName" :label-cols="3" :horizontal="true">
-             <vue-single-select v-model="paciente" :options="pacientes" :required="true" option-label="a_title"
-              :getOptionDescription="getCustomDescription" option-key="id" @input="buscatePaciente">
-              </vue-single-select>
-            </CForm>
-        </CModal>
-        </CCol>
-      </CRow>
-      <CRow>
-        <CCol md="6">
-          <CModal title="Modal title" class="modal-danger" v-model="dangerModal" @ok="eliminaTurno = false" ok-color="danger">
-          Está Ud. seguro de eliminar el turno?
-        </CModal>
-        </CCol>
-      </CRow>
+    </CCol>
+  </CRow>
   </div>
 
 </template>
 
 <script>
 import Vue from 'vue';
-import VueSingleSelect from "vue-single-select";
+import VueSingleSelect from 'vue-single-select';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 import CTableWrapper from '../base/Table.vue'
 import DataService from '../../services/DataService';
 const dataservice = new DataService();
@@ -87,7 +83,9 @@ var turnos = [];
 
 export default {
   components: {
-     VueSingleSelect
+     VueSingleSelect,
+     DatePicker
+     
     },
     //...
   
@@ -95,6 +93,8 @@ export default {
   data () {
     return {
       turnos: [],
+      inicio: null,
+      fin: null,
       fields: [
         {key: 'hora'},
         {key: 'paciente'},
@@ -112,8 +112,10 @@ export default {
       profesionales:[],
       profesional:'',
       fecha:'',
-      pacientes:[],
-      paciente:''
+      empleados: [{ id: 1, a_title: "Vince Carter",tipo:"mensual" },{ id: 2, a_title: "Kareem Abdul Jabbar",tipo:"mensual" },
+                 { id: 3, a_title: "Charles Barkley",tipo:"jornal"},{ id: 4, a_title: "Isaiah Thomas",tipo:"jornal" }],
+      empleado:'',
+      tipo:''
     }
   },
   created () {
@@ -129,15 +131,21 @@ export default {
       );
     },*/
   methods: {
-    fetchProfesionales (fechita) {
+    calculaJornales(){
+      alert('Calculando horas trabajadas');
+    },
+    saveJornales(){
+      alert('Guardando datos...');
+    },
+    fetchEmpleados (fechita) {
       this.show = true;
       this.fecha=fechita;
       this.profesionales  =[
-            {value: 1, text:'Sandro de America'},
-            {value: 2, text:'Ezequiel pindonga'},
-            {value: 3, text:'Pija Dura'},
-            {value: 4, text:'Caca de Perro'},
-            {value: 5, text:'Gordo Porcel'}
+            {value: '1', text:'Sandro de America'},
+            {value: '2', text:'Ezequiel pindonga'},
+            {value: '3', text:'Pija Dura'},
+            {value: '4', text:'Caca de Perro'},
+            {value: '5', text:'Gordo Porcel'}
         ];
         this.profesional=this.profesionales[0].value;
       /*dataservice.getProfesionales().then( result => {
@@ -169,7 +177,7 @@ export default {
     cambiando(prof){
       this.profesional=prof;
       
-      dataservice.getTurnosDiaProfesional(this.fecha,prof).then( result => {
+      /*dataservice.getTurnosDiaProfesional(this.fecha,prof).then( result => {
         if(result.status==200){
           console.log(result.data);
         }
@@ -177,7 +185,7 @@ export default {
       (error) => {
         //this.showAlert();
         //this.disabled=1;
-      })
+      })*/
 
 
 
@@ -220,22 +228,23 @@ export default {
             break;
           case "Inactive":
           //traigo pacientes y para asignar a ese turno
-            this.pacientes= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
+            this.empleados= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
                  { id: 3, a_title: "Eos rerum veniam quia mollitia"},{ id: 4, a_title: "Robs Thread" }];
             this.primaryModal=true;
             break;
           case "Pending":
             //traigo pacientes y permito editar el turno
-            this.pacientes= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
+            this.empleados= [{ id: 1, a_title: "baz bar" },{ id: 2, a_title: "foo bar" },
                  { id: 3, a_title: "Eos rerum veniam quia mollitia"},{ id: 4, a_title: "Robs Thread" }];
             this.primaryModal=true;
         }
         
         
       },
-      buscatePaciente(opt){
+      buscateEmpleado(opt){
         if(opt){
-          console.log("paciente:"+opt.a_title+" ID:"+opt.id);
+          console.log("paciente:"+opt.a_title+" ID:"+opt.id+" TIPO:"+opt.tipo);
+          this.tipo=opt.tipo;
         }        
         //alert(this.value);
 
@@ -250,7 +259,14 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.mx-input-wrapper {
+    position: relative;
+    margin: 10px 5px !important;
+}
+.mx-datepicker{
+  margin-top: 5px!important;
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
