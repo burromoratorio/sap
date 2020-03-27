@@ -11,16 +11,16 @@
             </CRow>
             <CRow>
               <CCol sm="6">
-                <date-picker placeholder="Fecha Inicio:" format="DD-MM-YYYY HH:mm" v-model="inicio" type="datetime" ></date-picker>
+                <date-picker placeholder="Fecha Inicio:" format="DD-MM-YYYY HH:mm" :minute-step="minutestep" v-model="inicio" type="datetime" ></date-picker>
               </CCol>
               <CCol sm="6">
-                <date-picker placeholder="Fecha Fin:" format="DD-MM-YYYY HH:mm" v-model="fin" type="datetime"></date-picker>
+                <date-picker placeholder="Fecha Fin:" format="DD-MM-YYYY HH:mm" :minute-step="minutestep" v-model="fin" type="datetime"></date-picker>
               </CCol>
             </CRow>
             <CRow>
-              <CCol sm="4"><CInput label="Horas al 50" placeholder="Al 50" /></CCol>
-              <CCol sm="4"><CInput label="Horas al 100" placeholder="Al 100" /></CCol>
-              <CCol sm="4"><CInput label="Horas al 125" placeholder="Al 125" /></CCol>
+              <CCol sm="4"><CInput label="Horas al 50" placeholder="Al 50" v-model="mediaH" /></CCol>
+              <CCol sm="4"><CInput label="Horas al 100" placeholder="Al 100" v-model="hora" /></CCol>
+              <CCol sm="4"><CInput label="Horas al 125" placeholder="Al 125" v-model="horaPico"/></CCol>
             </CRow>
           </CForm>
           </CCardBody>
@@ -29,13 +29,13 @@
             <CCardBody>
               <CRow>
                   <CCol sm="4">
-                    <CInput label="Dias" placeholder="Dias" />
+                    <CInput label="Dias" placeholder="Dias" v-model="dias"/>
                   </CCol>
                   <CCol sm="4">
-                    <CInput label="Horas Trabajdas" placeholder="Horas" />
+                    <CInput label="Horas Trabajdas" placeholder="Horas" v-model="totalHoras"/>
                   </CCol>
                   <CCol sm="4">
-                    <CInput label="Jornales Trabajados" placeholder="Jornales" />
+                    <CInput label="Jornales Trabajados" placeholder="Jornales" v-model="totalJornales"/>
                   </CCol>
               </CRow>
               <CRow class="align-items-center">
@@ -76,6 +76,7 @@ import Vue from 'vue';
 import VueSingleSelect from 'vue-single-select';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
+import 'vue2-datepicker/locale/es';
 import CTableWrapper from '../base/Table.vue'
 import DataService from '../../services/DataService';
 const dataservice = new DataService();
@@ -92,26 +93,24 @@ export default {
   name: 'Alta',
   data () {
     return {
-      turnos: [],
       inicio: null,
       fin: null,
+      minutestep:15,
+      mediaH:0,
+      hora:0,
+      horaPico:0,
+      mediaH:0,
+      totalHoras:0,
+      totalJornales:0,
+      dias:0,
       fields: [
         {key: 'hora'},
         {key: 'paciente'},
         {key: 'status'}
       ],
-      currentPage: 1,
-      perPage: 5,
-      totalRows: 0,
-      selected: [], // Must be an array reference!
-      show: true,
       startDate: '',
       primaryModal: false,
       dangerModal: false,
-      fruit:[],
-      profesionales:[],
-      profesional:'',
-      fecha:'',
       empleados: [{ id: 1, a_title: "Vince Carter",tipo:"mensual" },{ id: 2, a_title: "Kareem Abdul Jabbar",tipo:"mensual" },
                  { id: 3, a_title: "Charles Barkley",tipo:"jornal"},{ id: 4, a_title: "Isaiah Thomas",tipo:"jornal" }],
       empleado:'',
@@ -132,7 +131,17 @@ export default {
     },*/
   methods: {
     calculaJornales(){
-      alert('Calculando horas trabajadas');
+      var diaIni=this.inicio.getDay();
+      var horaIni=this.inicio.getHours();
+      var diaFin=this.fin.getDay();
+      var horaFin=this.fin.getHours();
+      if(diaIni==diaFin){
+        var cantHoras=(parseInt(horaFin) - parseInt(horaIni));
+        this.hora=cantHoras;
+        this.dias=1;
+        this.totalJornales=1;
+      }
+      this.totalHoras=(parseInt(this.hora) + parseInt(this.mediaH) +  parseInt(this.horaPico));
     },
     saveJornales(){
       alert('Guardando datos...');
