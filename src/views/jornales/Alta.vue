@@ -17,10 +17,11 @@
                 <date-picker placeholder="Fecha Fin:" format="DD-MM-YYYY HH:mm" :minute-step="minutestep" v-model="fin" type="datetime"></date-picker>
               </CCol>
             </CRow>
-            <CRow>
-              <CCol sm="4"><CInput label="Horas al 50" placeholder="Al 50" v-model="mediaH" /></CCol>
-              <CCol sm="4"><CInput label="Horas al 100" placeholder="Al 100" v-model="hora" /></CCol>
-              <CCol sm="4"><CInput label="Horas al 125" placeholder="Al 125" v-model="horaPico"/></CCol>
+            <CRow>             
+              <CCol sm="3"><CInput label="Horas Normales" placeholder="normal" v-model="normal" /></CCol>
+              <CCol sm="3"><CInput label="Horas al 50" placeholder="Al 50" v-model="hora50" /></CCol>
+              <CCol sm="3"><CInput label="Horas al 100" placeholder="Al 100" v-model="hora100" /></CCol>
+              <CCol sm="3"><CInput label="Horas al 125" placeholder="Al 125" v-model="hora125"/></CCol>
             </CRow>
           </CForm>
           </CCardBody>
@@ -96,13 +97,15 @@ export default {
       inicio: null,
       fin: null,
       minutestep:15,
-      mediaH:0,
-      hora:0,
-      horaPico:0,
-      mediaH:0,
+      hora50:0,
+      hora100:0,
+      hora125:0,
+      normal:0,
       totalHoras:0,
       totalJornales:0,
       dias:0,
+      topeUnoNormal:6,
+      topeDosNormal:18,
       fields: [
         {key: 'hora'},
         {key: 'paciente'},
@@ -136,8 +139,11 @@ export default {
       var diaFin=this.fin.getDay();
       var horaFin=this.fin.getHours();
       if(diaIni==diaFin){
-        var cantHoras=(parseInt(horaFin) - parseInt(horaIni));
-        this.hora=cantHoras;
+        var cantHoras=this.obtenerTipoDeJornal(horaIni,horaFin,diaIni);
+        this.normal=cantHoras['normal'];
+        this.hora50=cantHoras['extra50'];
+        this.hora100=cantHoras['extra100'];
+        this.hora125=cantHoras['extra125'];
         this.dias=1;
         this.totalJornales=1;
       }
@@ -145,6 +151,19 @@ export default {
     },
     saveJornales(){
       alert('Guardando datos...');
+    },
+    obtenerTipoDeJornal(hIni,hFin,dia){
+      var totalesHoras  ={normal: 0,extra50: 0,extra100: 0,extra125: 0};
+      if(1<=dia<=5){//lunes a viernes
+        if(hIni<this.topeUnoNormal && hFin<=this.topeDosNormal){
+          totalesHoras['extra50']=(this.topeUnoNormal-hIni);
+          totalesHoras['normal']=(hFin-this.topeUnoNormal);
+        }
+        if(hIni<this.topeUnoNormal && hFin<=this.topeUnoNormal){
+          totalesHoras['extra50']=(hFin-hIni);
+        }
+      }
+      return totalesHoras;
     },
     fetchEmpleados (fechita) {
       this.show = true;
