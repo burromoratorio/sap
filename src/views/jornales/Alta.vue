@@ -155,13 +155,24 @@ export default {
     obtenerTipoDeJornal(hIni,hFin,dia){
       var totalesHoras  ={normal: 0,extra50: 0,extra100: 0,extra125: 0};
       if(1<=dia<=5){//lunes a viernes
-        if(hIni<this.topeUnoNormal && hFin<=this.topeDosNormal){
+        if(hIni>=this.topeUnoNormal && hIni<this.topeDosNormal && hFin<=this.topeDosNormal){
+          totalesHoras['normal']=(hFin-hIni);
+        }
+        if(hIni<this.topeUnoNormal && hFin>=this.topeUnoNormal && hFin<=this.topeDosNormal){//00 a 06 y 06 a 18 am
           totalesHoras['extra50']=(this.topeUnoNormal-hIni);
           totalesHoras['normal']=(hFin-this.topeUnoNormal);
         }
-        if(hIni<this.topeUnoNormal && hFin<=this.topeUnoNormal){
+        if(hIni<this.topeUnoNormal && hFin<=this.topeUnoNormal){//00 a 06 
           totalesHoras['extra50']=(hFin-hIni);
         }
+        if(this.topeUnoNormal<=hIni && hIni<=this.topeDosNormal && hFin>=this.topeDosNormal){//06 a 18 y 18 a 24
+          totalesHoras['normal']=(this.topeDosNormal-hIni);
+          totalesHoras['extra50']=(hFin-this.topeDosNormal);
+        }
+        if(this.topeDosNormal<=hFin && this.topeDosNormal<=hFin){
+          totalesHoras['extra50']=(hFin-hIni);
+        }
+
       }
       return totalesHoras;
     },
