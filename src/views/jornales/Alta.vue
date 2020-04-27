@@ -106,6 +106,8 @@ export default {
       dias:0,
       topeUnoNormal:6,
       topeDosNormal:18,
+      topeTres:12,
+      topeCuatro:24,
       fields: [
         {key: 'hora'},
         {key: 'paciente'},
@@ -155,26 +157,66 @@ export default {
     obtenerTipoDeJornal(hIni,hFin,dia){
       var totalesHoras  ={normal: 0,extra50: 0,extra100: 0,extra125: 0};
       if(1<=dia<=5){//lunes a viernes
-        if(hIni>=this.topeUnoNormal && hIni<this.topeDosNormal && hFin<=this.topeDosNormal){
-          totalesHoras['normal']=(hFin-hIni);
+        totalesHoras  = this.calculaHorasSemana(hIni,hFin);
+      }
+      if(dia==6){
+        totalesHoras  = this.calculaHorasSabado(hIni,hFin);
+      }
+      if(dia==7){
+        totalesHoras  = this.calculaHorasDomingo(hIni,hFin);
+      }
+      return totalesHoras;
+    },
+    calculaHorasSemana(hIni,hFin){
+      var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
+      if(hIni>=this.topeUnoNormal && hIni<this.topeDosNormal && hFin<=this.topeDosNormal){
+          totales['normal']=(hFin-hIni);
         }
         if(hIni<this.topeUnoNormal && hFin>=this.topeUnoNormal && hFin<=this.topeDosNormal){//00 a 06 y 06 a 18 am
-          totalesHoras['extra50']=(this.topeUnoNormal-hIni);
-          totalesHoras['normal']=(hFin-this.topeUnoNormal);
+          totales['extra50']=(this.topeUnoNormal-hIni);
+          totales['normal']=(hFin-this.topeUnoNormal);
         }
         if(hIni<this.topeUnoNormal && hFin<=this.topeUnoNormal){//00 a 06 
           totalesHoras['extra50']=(hFin-hIni);
         }
         if(this.topeUnoNormal<=hIni && hIni<=this.topeDosNormal && hFin>=this.topeDosNormal){//06 a 18 y 18 a 24
-          totalesHoras['normal']=(this.topeDosNormal-hIni);
-          totalesHoras['extra50']=(hFin-this.topeDosNormal);
+          totales['normal']=(this.topeDosNormal-hIni);
+          totales['extra50']=(hFin-this.topeDosNormal);
         }
         if(this.topeDosNormal<=hFin && this.topeDosNormal<=hFin){
-          totalesHoras['extra50']=(hFin-hIni);
+          totales['extra50']=(hFin-hIni);
         }
-
+      return totales;
+    },
+    /*topeUnoNormal:6,
+      topeDosNormal:18,
+      topeTres:12,
+      topeCuatro:24,*/
+    calculaHorasSabado(hIni,hFin){
+      var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
+      var rango=0;
+      if(0<hIni<6 && hFin<=6){
+        totales['extra50']=hFin-hIni;
       }
-      return totalesHoras;
+      if(0<hIni<6 && 6<hFin<=12){
+        totales['extra50']=6-hIni;
+        totales['normal']=hFin-6;
+      }
+      if(0<hIni<6 && 12<hFin<24){
+        totales['extra50']=6-hIni;
+        totales['normal']=6;
+        totales['extra100']=hFin-12;
+      }
+      if(6<hIni<=12 && 6<hFin<=12){
+        totales['normal']=6;
+      }
+      if(6<hIni<=12 && 12<hFin<24){
+        totales['normal']=6;
+        totales['extra100']=hFin-12;
+      }
+    },
+    calculaHorasDomingo(hIni,hFin){
+      var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
     },
     fetchEmpleados (fechita) {
       this.show = true;
