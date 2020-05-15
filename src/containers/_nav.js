@@ -13,6 +13,18 @@ export default [
         }
       },
       {
+        _name: 'CSidebarNavDropdown',
+        name: 'Jornales',
+        route: '/jornales',
+        icon: 'cil-calculator',
+        items: [
+          {
+            name: 'Alta',
+            to: '/jornales/Alta'
+          }
+        ]
+      }, 
+      {
         _name: 'CSidebarNavTitle',
         _children: ['Theme']
       },
@@ -196,18 +208,7 @@ export default [
       {
         _name: 'CSidebarNavTitle',
         _children: ['Extras']
-      },{
-        _name: 'CSidebarNavDropdown',
-        name: 'Jornales',
-        route: '/jornales',
-        icon: 'cil-calculator',
-        items: [
-          {
-            name: 'Alta',
-            to: '/jornales/Alta'
-          }
-        ]
-      }, 
+      },
       {
         _name: 'CSidebarNavDropdown',
         name: 'Pages',

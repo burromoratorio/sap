@@ -81,6 +81,21 @@ function configRoutes () {
           component: Dashboard
         },
         {
+      path: '/jornales',
+      redirect: '/jornales/Alta',
+      name: 'Jornales',
+      component: {
+            render (c) { return c('router-view') }
+      },
+      children: [
+        {
+          path: 'Alta',
+          name: 'Alta',
+          component: Alta
+        }
+      ]
+    },
+        {
           path: 'theme',
           redirect: '/theme/colors',
           name: 'Theme',
@@ -135,21 +150,7 @@ function configRoutes () {
               component: User
             }
           ]
-        },{
-      path: '/jornales',
-      redirect: '/jornales/Alta',
-      name: 'Jornales',
-      component: {
-            render (c) { return c('router-view') }
-      },
-      children: [
-        {
-          path: 'Alta',
-          name: 'Alta',
-          component: Alta
-        }
-      ]
-    },
+        },
         {
           path: 'base',
           redirect: '/base/cards',

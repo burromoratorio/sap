@@ -104,6 +104,7 @@ export default {
       totalHoras:0,
       totalJornales:0,
       dias:0,
+      topeCero:0,
       topeUnoNormal:6,
       topeDosNormal:18,
       topeTres:12,
@@ -140,6 +141,12 @@ export default {
       var horaIni=this.inicio.getHours();
       var diaFin=this.fin.getDay();
       var horaFin=this.fin.getHours();
+      this.normal=0;
+      this.hora50=0;
+      this.hora100=0;
+      this.hora125=0;
+      this.dias=1;
+      this.totalJornales=1;
       if(diaIni==diaFin){
         var cantHoras=this.obtenerTipoDeJornal(horaIni,horaFin,diaIni);
         this.normal=cantHoras['normal'];
@@ -147,27 +154,35 @@ export default {
         this.hora100=cantHoras['extra100'];
         this.hora125=cantHoras['extra125'];
         this.dias=1;
-        this.totalJornales=1;
+        this.totalJornales=(horaFin-horaIni)/6;
       }
-      this.totalHoras=(parseInt(this.hora) + parseInt(this.mediaH) +  parseInt(this.horaPico));
+      this.totalHoras=parseInt((horaFin-horaIni));
     },
     saveJornales(){
       alert('Guardando datos...');
     },
     obtenerTipoDeJornal(hIni,hFin,dia){
+      console.log("dia:"+dia);
+      var diaSemana = parseInt(dia);
       var totalesHoras  ={normal: 0,extra50: 0,extra100: 0,extra125: 0};
-      if(1<=dia<=5){//lunes a viernes
-        totalesHoras  = this.calculaHorasSemana(hIni,hFin);
-      }
-      if(dia==6){
-        totalesHoras  = this.calculaHorasSabado(hIni,hFin);
-      }
-      if(dia==7){
-        totalesHoras  = this.calculaHorasDomingo(hIni,hFin);
+      switch(diaSemana) {
+        case 6:
+          totalesHoras  = this.calculaHorasSabado(hIni,hFin);
+          break;
+        case 0:
+          totalesHoras  = this.calculaHorasDomingo(hIni,hFin);
+          break;
+        default:
+          totalesHoras  = this.calculaHorasSemana(hIni,hFin);
       }
       return totalesHoras;
     },
+    /*topeUnoNormal:6,
+      topeDosNormal:18,
+      topeTres:12,
+      topeCuatro:24,*/
     calculaHorasSemana(hIni,hFin){
+      
       var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
       if(hIni>=this.topeUnoNormal && hIni<this.topeDosNormal && hFin<=this.topeDosNormal){
           totales['normal']=(hFin-hIni);
@@ -177,7 +192,7 @@ export default {
           totales['normal']=(hFin-this.topeUnoNormal);
         }
         if(hIni<this.topeUnoNormal && hFin<=this.topeUnoNormal){//00 a 06 
-          totalesHoras['extra50']=(hFin-hIni);
+          totales['extra50']=(hFin-hIni);
         }
         if(this.topeUnoNormal<=hIni && hIni<=this.topeDosNormal && hFin>=this.topeDosNormal){//06 a 18 y 18 a 24
           totales['normal']=(this.topeDosNormal-hIni);
@@ -186,6 +201,10 @@ export default {
         if(this.topeDosNormal<=hFin && this.topeDosNormal<=hFin){
           totales['extra50']=(hFin-hIni);
         }
+        if(hIni<this.topeUnoNormal && hFin>=this.topeDosNormal){//00 a 06 y 18<fin
+          totales['extra50']=6+(hFin-this.topeDosNormal);
+          totales['normal']=12;
+        }
       return totales;
     },
     /*topeUnoNormal:6,
@@ -193,30 +212,61 @@ export default {
       topeTres:12,
       topeCuatro:24,*/
     calculaHorasSabado(hIni,hFin){
+      console.log("inicio:"+hIni+" fin:"+hFin);
       var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
       var rango=0;
-      if(0<hIni<6 && hFin<=6){
+      if(this.topeCero<hIni && hIni<=this.topeUnoNormal && hFin<=this.topeUnoNormal){
+        console.log("calculo Correcto");
         totales['extra50']=hFin-hIni;
       }
-      if(0<hIni<6 && 6<hFin<=12){
-        totales['extra50']=6-hIni;
-        totales['normal']=hFin-6;
+      if(this.topeCero<hIni && hIni<=this.topeUnoNormal){
+        if(this.topeUnoNormal<hFin && hFin<=this.topeTres){
+           totales['extra50']=6-hIni;
+          totales['normal']=hFin-6;
+        }else if(this.topeTres<=hFin && hFin<this.topeCuatro){
+          console.log("calculo que no va");
+          totales['extra50']=6-hIni;
+          totales['normal']=6;
+          totales['extra100']=hFin-12;
+        }
       }
-      if(0<hIni<6 && 12<hFin<24){
-        totales['extra50']=6-hIni;
-        totales['normal']=6;
-        totales['extra100']=hFin-12;
+      if(this.topeUnoNormal<hIni && hFin<=this.topeTres){
+        if(this.topeTres<hFin && hFin<=this.topeCuatro){
+          console.log("calculo que no va ttres:"+this.topeTres+" FIN:"+hFin+" Tcuatro:"+this.topeCuatro);
+          totales['normal']=6;
+          totales['extra100']=hFin-12;
+        }else{
+          console.log("error");
+        }
       }
-      if(6<hIni<=12 && 6<hFin<=12){
-        totales['normal']=6;
-      }
-      if(6<hIni<=12 && 12<hFin<24){
-        totales['normal']=6;
-        totales['extra100']=hFin-12;
-      }
+     
+      return totales;
     },
     calculaHorasDomingo(hIni,hFin){
+      
       var totales={normal: 0,extra50: 0,extra100: 0,extra125: 0};
+      if(hIni<6 && hFin<=6){
+        totales['extra125']=hFin-hIni;
+      }
+      if(hIni<=6 && 6<hFin && hFin<=18){
+        totales['extra125']=6;
+        totales['extra100']=hFin-6;
+      }
+      if(6<=hIni && hIni<=18 && 6<hFin && hFin<=18){
+        totales['extra100']=hFin-hIni;
+      }
+      if(6<hIni && hIni<=18 && hFin>18 ){
+        totales['extra125']=hFin-18;
+        totales['extra100']=18-hIni;
+      }
+      if(18<=hIni && hIni<24 && 18<hFin && hFin<=24){
+        totales['extra125']=hFin-hIni;
+      }
+      if(hIni<6 && hFin>18){
+        totales['extra125']=6+(hFin-18);
+        totales['extra100']=12;
+      }
+      return totales;
     },
     fetchEmpleados (fechita) {
       this.show = true;
